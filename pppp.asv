@@ -1,0 +1,56 @@
+% Leer la imagen
+img = imread('Playita.jpg');
+
+% Mostrar la imagen en una figura
+figure;
+imshow(img);
+
+% Obtener el número de puntos a analizar
+n = input('Introduce el número de puntos a analizar: ');
+
+% Obtener las coordenadas de los n puntos a analizar
+[x, y] = ginput(n);
+
+% Obtener los valores RGB de los puntos vecinos y calcular los promedios para cada punto
+rgb_avg_array = zeros(n, 3); % Array para almacenar los promedios RGB para cada punto
+for k = 1:n
+    % Obtener los valores RGB de los puntos vecinos
+    rgb_array = zeros(8,3); % Array para almacenar los valores RGB de los puntos vecinos
+    for i = -1:1
+        for j = -1:1
+            if i == 0 && j == 0
+                continue % Saltar el punto seleccionado
+            end
+            x_new = x(k) + i; % Coordenada x del punto vecino
+            y_new = y(k) + j; % Coordenada y del punto vecino
+            rgb = impixel(img, x_new, y_new); % Obtener los valores RGB del punto vecino
+            rgb_array((i+2)*3+j+2, :) = rgb'; % Almacenar los valores RGB en el array
+        end
+    end
+    
+    % Calcular los promedios de los valores RGB de los puntos vecinos
+    rgb_avg = mean(rgb_array);
+
+    % Almacenar los promedios RGB en el array
+    rgb_avg_array(k,:) = rgb_avg;
+end
+
+% Mostrar los valores RGB promedio para cada punto
+fprintf('Promedios RGB de los puntos vecinos:\n');
+for k = 1:n
+    fprintf('Punto %d: R: %.2f, G: %.2f, B: %.2f\n', k, rgb_avg_array(k,1), rgb_avg_array(k,2), rgb_avg_array(k,3));
+end
+random_pixels=impixel(img);
+
+array_class=[];
+for p= 1:n
+    aux1_cc=1;
+    for l=i:15
+        if(sqrt((random_pixels(i,1)-rgb_avg_array(p,1))^2 + (random_pixels(i,2)-rgb_avg_array(p,2))^2 + (random_pixels(i,3)-rgb_avg_array(p,3))^2))
+            array_class(p,aux1_cc,1)=random_pixels(i,1);
+            array_class(p,aux1_cc,2)=random_pixels(i,2);
+            array_class(p,aux1_cc,3)=random_pixels(i,3);
+            aux1_cc=aux1_cc+1;
+        end
+    end
+end
