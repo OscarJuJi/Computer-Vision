@@ -1,0 +1,42 @@
+clc;
+close all;
+clear global;
+warning off all;
+% Cargar la imagen a clasificar
+imagen = imread('mounta.jpg');
+
+% Extrae los canales de color RGB
+rojo = imagen(:,:,1);
+verde = imagen(:,:,2);
+azul = imagen(:,:,3);
+
+% Calcula las características de color
+promedio_rojo = mean(rojo(:));
+promedio_verde = mean(verde(:));
+promedio_azul = mean(azul(:));
+
+% Define los umbrales para cada clase
+umbral_playa = 0.4;  % Predominante tonos azules y blancos
+umbral_montanas = 0.3;  % Cafés y/o blancos y/o verde
+umbral_pradera_verde = 0.2;  % Verde del pasto
+umbral_pradera_azul = 0.1;  % Azul presente en la pradera
+umbral_bosque_verde = 0.3;  % Verde predominante
+umbral_bosque_azul = 0.15;  % Azul presente en el bosque
+
+% Realiza la clasificación de la imagen
+if promedio_azul > umbral_playa && promedio_azul > promedio_rojo && promedio_azul > promedio_verde
+    clase = 'Playa';
+elseif promedio_rojo > umbral_montanas && promedio_rojo > promedio_verde && promedio_rojo > promedio_azul
+    clase = 'Montañas';
+elseif promedio_verde > umbral_pradera_verde && promedio_verde > promedio_azul && promedio_verde > umbral_bosque_verde
+    if promedio_azul > umbral_pradera_azul
+        clase = 'Pradera';
+    else
+        clase = 'Bosque';
+    end
+else
+    clase = 'Desconocida'; % No se pudo clasificar la imagen
+end
+
+% Muestra el resultado
+fprintf('La imagen pertenece a la clase: %s\n', clase);
